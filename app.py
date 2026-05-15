@@ -22,6 +22,7 @@ import numpy as np
 import pandas as pd
 from langchain.schema import BaseRetriever
 
+
 openai.api_key = st.secrets["OPENAI_API_KEY"]
 
 # Enhanced system prompt for maximum accuracy with language consistency and table support
