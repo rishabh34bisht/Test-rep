@@ -356,9 +356,9 @@ def reset_conversation():
         )
         st.session_state.chat_history = []
         st.session_state.messages = []
-        st.success("✅ Chat cleared! Documents still loaded.")
+        st.success("Chat cleared! Documents still loaded.")
     else:
-        st.warning("⚠️ Please upload and process documents first.")
+        st.warning("Please upload and process documents first.")
 
 
 def generate_chat():
@@ -413,11 +413,11 @@ def handle_userinput(user_question):
             # Performance metrics
             col1, col2 = st.columns([3, 1])
             with col2:
-                st.caption(f"⏱️ {elapsed_time:.2f}s")
+                st.caption(f"{elapsed_time:.2f}s")
             
             # Source documents
             if response.get('source_documents'):
-                with st.expander(f"📚 Sources ({len(response['source_documents'])} documents)"):
+                with st.expander(f"Sources ({len(response['source_documents'])} documents)"):
                     sources_seen = set()
                     for idx, doc in enumerate(response['source_documents'], 1):
                         source = doc.metadata.get('source', 'Unknown')
@@ -433,9 +433,9 @@ def handle_userinput(user_question):
                             # Display source info with table indicator
                             st.markdown(f"**Source {idx}:** `{source}`")
                             if doc_type == 'pdf_table':
-                                st.caption(f"📊 Table {table_num} | Page {page}")
+                                st.caption(f"Table {table_num} | Page {page}")
                             elif page:
-                                st.caption(f"📄 Page {page} | Type: {doc_type}")
+                                st.caption(f"Page {page} | Type: {doc_type}")
                             
                             # Show excerpt
                             excerpt = doc.page_content[:250].strip()
@@ -447,22 +447,20 @@ def handle_userinput(user_question):
         
     except Exception as e:
         error_msg = str(e)
-        st.error(f"❌ Error: {error_msg}")
+        st.error(f"Error: {error_msg}")
         
         # Provide helpful suggestions
         if "rate limit" in error_msg.lower():
-            st.info("💡 Rate limit reached. Please wait a moment and try again.")
+            st.info("Rate limit reached. Please wait a moment and try again.")
         elif "context length" in error_msg.lower():
-            st.info("💡 Context too long. Try clearing chat or asking a simpler question.")
+            st.info("Context too long. Try clearing chat or asking a simpler question.")
         else:
-            st.info("💡 Try rephrasing your question or check if the information is in your documents.")
+            st.info("Try rephrasing your question or check if the information is in your documents.")
 
 
 def main():
     st.set_page_config(
-        page_title="Advanced Multi-document Chatbot",
-        page_icon="🚀",
-        layout="wide"
+        page_title="Advanced Multi-document Chatbot", layout="wide"
     )
     
     # Custom CSS
@@ -502,17 +500,17 @@ def main():
 
     # Sidebar
     with st.sidebar:
-        st.header("⚙️ Configuration")
+        st.header("Configuration")
         
         # Language preference setting
-        with st.expander("🌐 Language Settings", expanded=False):
+        with st.expander("Language Settings", expanded=False):
             language_mode = st.radio(
                 "Language Response Mode",
                 ["Auto (Match user's language)", "Force English", "Force Arabic"],
                 index=0
             )
-            st.caption("⚠️ 'Auto' mode matches your question language automatically")
-            st.caption("💡 Recommended: Use Auto mode for best experience")
+            st.caption("'Auto' mode matches your question language automatically")
+            st.caption("Recommended: Use Auto mode for best experience")
             
             if language_mode == "Force English":
                 st.session_state.language_preference = "english"
@@ -522,16 +520,16 @@ def main():
                 st.session_state.language_preference = "auto"
         
         # Advanced settings
-        with st.expander("🎛️ Advanced Settings", expanded=False):
+        with st.expander("Advanced Settings", expanded=False):
             chunk_size = st.slider("Chunk Size", 400, 1200, 700, 50)
             chunk_overlap = st.slider("Chunk Overlap", 50, 300, 150, 50)
             retrieval_k = st.slider("Retrieval K", 4, 12, 8, 1)
-            st.caption("💡 Adjust these if you're not getting good results")
+            st.caption("Adjust these if you're not getting good results")
         
         st.divider()
         
         # File uploader
-        st.subheader("📁 Upload Documents")
+        st.subheader("Upload Documents")
         multi_docs = st.file_uploader(
             "Supported: PDF, TXT, DOC, DOCX, PPT, PPTX",
             accept_multiple_files=True,
@@ -541,9 +539,9 @@ def main():
         col1, col2 = st.columns(2)
         
         with col1:
-            if st.button("🔄 Process", type="primary"):
+            if st.button("Process", type="primary"):
                 if multi_docs:
-                    with st.spinner("⚙️ Processing documents and extracting tables..."):
+                    with st.spinner("Processing documents and extracting tables..."):
                         try:
                             progress_bar = st.progress(0)
                             
@@ -552,7 +550,7 @@ def main():
                             documents = get_multifile_text(multi_docs)
                             
                             if not documents:
-                                st.error("❌ No text extracted from documents.")
+                                st.error("No text extracted from documents.")
                                 return
                             
                             # Count tables and text
@@ -582,24 +580,24 @@ def main():
                             progress_bar.progress(100)
                             st.session_state.processed_files = [f.name for f in multi_docs]
                             
-                            st.success('✅ Ready to chat!')
+                            st.success('Ready to chat!')
                             time.sleep(0.5)
                             progress_bar.empty()
                             
                         except Exception as e:
-                            st.error(f"❌ Error: {str(e)}")
+                            st.error(f" Error: {str(e)}")
                             progress_bar.empty()
                 else:
-                    st.warning("⚠️ Please upload documents first.")
+                    st.warning("Please upload documents first.")
         
         with col2:
-            if st.button("🗑️ Clear"):
+            if st.button("Clear"):
                 reset_conversation()
         
         # Show stats
         if st.session_state.text_chunks:
             st.divider()
-            st.subheader("📊 Statistics")
+            st.subheader("Statistics")
             col1, col2 = st.columns(2)
             with col1:
                 st.metric("Documents", len(st.session_state.processed_files))
@@ -609,7 +607,7 @@ def main():
         # Show files
         if st.session_state.processed_files:
             st.divider()
-            st.subheader("📑 Loaded Files")
+            st.subheader("Loaded Files")
             for file_name in st.session_state.processed_files:
                 st.text(f"✓ {file_name}")
         
@@ -619,27 +617,27 @@ def main():
             generate_chat()
             with open('chatsarchive.txt', 'r', encoding='utf-8') as f:
                 st.download_button(
-                    "💾 Download Chat",
+                    "Download Chat",
                     f,
                     file_name="chat_history.txt"
                 )
         
         # Info section
-        st.divider()
-        st.caption("🚀 **Features:**")
-        st.caption("• Language consistency (Auto mode)")
-        st.caption("• Accurate table extraction (pdfplumber)")
-        st.caption("• Hybrid semantic + keyword search")
-        st.caption("• Smart chunking with overlap")
-        st.caption("• Source citation")
-        st.caption("• Context-aware conversations")
+        # st.divider()
+        # st.caption("🚀 **Features:**")
+        # st.caption("• Language consistency (Auto mode)")
+        # st.caption("• Accurate table extraction (pdfplumber)")
+        # st.caption("• Hybrid semantic + keyword search")
+        # st.caption("• Smart chunking with overlap")
+        # st.caption("• Source citation")
+        # st.caption("• Context-aware conversations")
 
     # Main chat area
     if st.session_state.conversation is None:
         # Welcome screen
         col1, col2, col3 = st.columns([1, 2, 1])
         with col2:
-            st.info("👈 Upload documents to begin")
+            st.info("Upload documents to begin")
             # st.markdown("---")
             # st.subheader("✨ What makes this chatbot advanced?")
             # st.markdown("""
@@ -652,7 +650,7 @@ def main():
             # """)
             
             # st.markdown("---")
-            st.subheader("💬 Example Questions:")
+            st.subheader("Example Questions:")
             st.markdown("""
             **English:**
             - *"What is the main topic of this document?"*
@@ -672,7 +670,7 @@ def main():
                 st.markdown(message["content"])
         
         # Chat input
-        if user_question := st.chat_input("💬 Ask anything about your documents..."):
+        if user_question := st.chat_input("Ask anything about your documents..."):
             handle_userinput(user_question)
 
 
